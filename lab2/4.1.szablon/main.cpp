@@ -4,11 +4,11 @@
 #include <GL/freeglut.h>
 
 #include "shader_stuff.hpp"
-// #include "obiektA.h"
+#include "obiektA.h"
 // #include "obiektB.h"
-// #include "obiektC.h"
+#include "obiektC.h"
 // #include "obiektD.h"
-#include "cos.h"
+// #include "cos.h"
 //
 
 using namespace std;
@@ -37,7 +37,11 @@ GLuint idVAO;		// tablic wierzcholkow
 // };
 
 // Kolory wierzcholkow
-// GLfloat colors[numTriangles * 3 * 3] =
+GLfloat sumVertices[sizeof(vertices) + sizeof(vertices2)];
+
+
+
+GLfloat colors[numTriangles * 3 * 3];
 // {
 // 	1.0, 0.0, 0.0,
 // 	0.0, 1.0, 0.0,
@@ -65,7 +69,7 @@ void DisplayScene()
 
 		// Renderowanie obiektu
 		glBindVertexArray( idVAO );
-		glDrawArrays( GL_TRIANGLES, 0, numTriangles*3 );
+		glDrawArrays( GL_TRIANGLES, 0, numTriangles*3 + numTriangles2*3 );
 		glBindVertexArray( 0 );
 
 
@@ -85,12 +89,22 @@ void Initialize()
 	// -------------------------------------------------
 	glGenVertexArrays( 1, &idVAO );
 	glBindVertexArray( idVAO );
-
+  int i{0};
+  for (GLfloat &vertex : vertices)
+  {
+    sumVertices[i] = vertex;
+    i++;
+  }
+  for (GLfloat &vertex : vertices2)
+  {
+    sumVertices[i] = vertex;
+    i++;
+  }
 	// Bufor na wspolrzedne wierzcholkow
 	GLuint idVBO_coord;
 	glGenBuffers( 1, &idVBO_coord );
 	glBindBuffer( GL_ARRAY_BUFFER, idVBO_coord );
-	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
+	glBufferData( GL_ARRAY_BUFFER, sizeof( sumVertices ), sumVertices, GL_STATIC_DRAW );
 	glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 0, NULL );
 	glEnableVertexAttribArray( 0 );
 

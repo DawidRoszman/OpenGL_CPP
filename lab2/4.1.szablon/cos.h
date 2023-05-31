@@ -1,9 +1,9 @@
 // Dane w formacie dwu-wymiarowym
-constexpr int numTriangles = 9;
-constexpr int numVertices = 27;
+constexpr int numTriangles2 = 9;
+constexpr int numVertices2 = 27;
 
 // wspolrzedne wierzcholkow
-GLfloat vertices[27*2] =
+GLfloat vertices2[27*2] =
 {
 	0.540000, 0.290909,
 	0.000000, 0.650909,
@@ -43,7 +43,7 @@ GLfloat vertices[27*2] =
 };
 
 // kolory wierzcholkow
-GLfloat colors[27*3] =
+GLfloat colors2[27*3] =
 {
 	1.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,
