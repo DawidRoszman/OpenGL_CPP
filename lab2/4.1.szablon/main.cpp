@@ -4,6 +4,12 @@
 #include <GL/freeglut.h>
 
 #include "shader_stuff.hpp"
+// #include "obiektA.h"
+// #include "obiektB.h"
+// #include "obiektC.h"
+// #include "obiektD.h"
+#include "cos.h"
+//
 
 using namespace std;
 
@@ -15,32 +21,32 @@ GLuint idVAO;		// tablic wierzcholkow
 
 
 // Liczba wierzcholkow
-constexpr int numTriangles = 2;
+// constexpr int numTriangles = 2;
 
 
 // Wspolrzedne wierzchokow
-GLfloat vertices[numTriangles * 3 * 2] =
-{
-	-0.8, -0.8,
-	 0.0, -0.8,
-	-0.4,  0.0,
+// GLfloat vertices[numTriangles * 3 * 2] =
+// {
+// 	-0.8, -0.8,
+// 	 0.0, -0.8,
+// 	-0.4,  0.0,
 
-	 0.0,  0.0,
-	 0.8,  0.0,
-	 0.4,  0.8
-};
+// 	 0.0,  0.0,
+// 	 0.8,  0.0,
+// 	 0.4,  0.8
+// };
 
 // Kolory wierzcholkow
-GLfloat colors[numTriangles * 3 * 3] =
-{
-	1.0, 0.0, 0.0,
-	1.0, 0.0, 0.0,
-	1.0, 0.0, 0.0,
+// GLfloat colors[numTriangles * 3 * 3] =
+// {
+// 	1.0, 0.0, 0.0,
+// 	0.0, 1.0, 0.0,
+// 	0.0, 0.0, 1.0,
 
-	0.0, 1.0, 0.0,
-	0.0, 1.0, 0.0,
-	0.0, 1.0, 0.0
-};
+// 	0.0, 0.0, 1.0,
+// 	0.0, 1.0, 0.0,
+// 	1.0, 0.0, 0.0
+// };
 
 
 // ---------------------------------------------------
