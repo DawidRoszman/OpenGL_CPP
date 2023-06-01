@@ -1,9 +1,9 @@
 // Dane w formacie dwu-wymiarowym
-constexpr int numTriangles2 = 9;
-constexpr int numVertices2 = 27;
+constexpr int numTrianglesCos = 9;
+constexpr int numVerticesCos = 27;
 
 // wspolrzedne wierzcholkow
-GLfloat vertices2[27*2] =
+GLfloat verticesCos[27*2] =
 {
 	0.540000, 0.290909,
 	0.000000, 0.650909,

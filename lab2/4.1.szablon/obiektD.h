@@ -1,7 +1,7 @@
-constexpr int numTriangles = 11;
-constexpr int numVertices = 33;
+constexpr int numTrianglesD = 11;
+constexpr int numVerticesD = 33;
 
-GLfloat vertices[33*2] = {
+GLfloat verticesD[33*2] = {
     -0.704415, -0.752653,
     0.083707, 0.740859,
     -0.066515, 0.740859,
