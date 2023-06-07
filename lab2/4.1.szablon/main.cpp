@@ -15,12 +15,56 @@
 
 using namespace std;
 
+class CMesh {
+public:
+  // metody
+  void init(vector<GLfloat> triangles, vector<GLfloat> colors) {
+      // -------------------------------------------------
+  // Etap (2) przeslanie danych wierzcholków do OpenGL
+  // -------------------------------------------------
+  glGenVertexArrays(1, &idVAO);
+  glBindVertexArray(idVAO);
+  // Bufor na wspolrzedne wierzcholkow
+  glGenBuffers(1, &idVBO_coord);
+  glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
+  glBufferData(GL_ARRAY_BUFFER, triangles.size() * sizeof(float),
+               triangles.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+  glEnableVertexAttribArray(0);
+
+  // Bufor na kolory wierzcholkow
+  glGenBuffers(1, &idVBO_color);
+  glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+  glEnableVertexAttribArray(1);
+
+  // Wylaczenie aktualnego VAO
+  glBindVertexArray(0);
+
+  }
+
+  void draw(int currentNumOfTriangles) {
+    glBindVertexArray(idVAO);
+    glDrawArrays(GL_TRIANGLES, 0, currentNumOfTriangles * 3);
+    glBindVertexArray(0);
+  }
+
+  // skladowe
+  GLuint idVAO;       // tablic wierzcholkow
+  GLuint idVBO_coord; // bufora na wspolrzedne
+  GLuint idVBO_color;
+
+};
+
 // ---------------------------------------------------
 // Identyfikatory obiektow OpenGL
+  GLuint idVAO;       // tablic wierzcholkow
+  GLuint idVBO_coord; // bufora na wspolrzedne
+  GLuint idVBO_color;
 
-GLuint idProgram; // programu
-GLuint idVAO;     // tablic wierzcholkow
-GLuint idVBO_coord; // bufora na wspolrzedne
+GLuint idProgram;   // programu
+
 // Liczba wierzcholkow
 constexpr int numTriangles = 2;
 
@@ -42,6 +86,7 @@ GLfloat colors[numTriangles * 3 * 3];
 // }
 
 // Obecne wspolrzedne wierzcholka
+vector<GLfloat> currentColors;
 vector<GLfloat> currentVertecies;
 int currentNumOfTriangles;
 
@@ -57,10 +102,7 @@ void DisplayScene() {
   glUseProgram(idProgram);
 
   // Renderowanie obiektu
-  glBindVertexArray(idVAO);
-  glDrawArrays(GL_TRIANGLES, 0, currentNumOfTriangles * 3);
-  glBindVertexArray(0);
-
+  
   // Wylaczanie potoku
   glUseProgram(0);
 
@@ -70,29 +112,6 @@ void DisplayScene() {
 // ---------------------------------------------------
 // Funkcja inicjalizujaca
 void Initialize() {
-  // -------------------------------------------------
-  // Etap (2) przeslanie danych wierzcholków do OpenGL
-  // -------------------------------------------------
-  glGenVertexArrays(1, &idVAO);
-  glBindVertexArray(idVAO);
-  // Bufor na wspolrzedne wierzcholkow
-  glGenBuffers(1, &idVBO_coord);
-  glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
-  glBufferData(GL_ARRAY_BUFFER, currentVertecies.size() * sizeof(float),
-               currentVertecies.data(), GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-  glEnableVertexAttribArray(0);
-
-  // Bufor na kolory wierzcholkow
-  GLuint idVBO_color;
-  glGenBuffers(1, &idVBO_color);
-  glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-  glEnableVertexAttribArray(1);
-
-  // Wylaczenie aktualnego VAO
-  glBindVertexArray(0);
 
   // ---------------------------------------
   // Etap (3) stworzenie potoku graficznego
@@ -133,21 +152,35 @@ void Keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
     break;
   case '1':
+
     cout << "Obiekt A!\n";
     currentVertecies.clear();
     for (GLfloat ver : verticesA) {
       currentVertecies.push_back(ver);
     }
+
     currentNumOfTriangles = numTrianglesA;
 
     glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
     glBufferData(GL_ARRAY_BUFFER, currentVertecies.size() * sizeof(float),
                  currentVertecies.data(), GL_STATIC_DRAW);
 
+    for (int i{0}; i < numVerticesA; i++) {
+      srand(time(0)); // seed value
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
+    glBufferData(GL_ARRAY_BUFFER, currentColors.size() * sizeof(float),
+                 currentColors.data(), GL_STATIC_DRAW);
+
     glutPostRedisplay();
 
     break;
   case '2':
+    srand(time(0)); // seed value
+
     cout << "Obiekt B!\n";
     currentVertecies.clear();
     for (GLfloat ver : verticesB) {
@@ -158,11 +191,21 @@ void Keyboard(unsigned char key, int x, int y) {
     glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
     glBufferData(GL_ARRAY_BUFFER, currentVertecies.size() * sizeof(float),
                  currentVertecies.data(), GL_STATIC_DRAW);
+    for (int i{0}; i < numVerticesB; i++) {
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
+    glBufferData(GL_ARRAY_BUFFER, currentColors.size() * sizeof(float),
+                 currentColors.data(), GL_STATIC_DRAW);
 
     glutPostRedisplay();
 
     break;
   case '3':
+    srand(time(0)); // seed value
+
     cout << "Obiekt C!\n";
     currentVertecies.clear();
     for (GLfloat ver : verticesC) {
@@ -173,11 +216,21 @@ void Keyboard(unsigned char key, int x, int y) {
     glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
     glBufferData(GL_ARRAY_BUFFER, currentVertecies.size() * sizeof(float),
                  currentVertecies.data(), GL_STATIC_DRAW);
+    for (int i{0}; i < numVerticesC; i++) {
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
+    glBufferData(GL_ARRAY_BUFFER, currentColors.size() * sizeof(float),
+                 currentColors.data(), GL_STATIC_DRAW);
 
     glutPostRedisplay();
 
     break;
   case '4':
+    srand(time(0)); // seed value
+
     cout << "Obiekt D!\n";
     currentVertecies.clear();
     for (GLfloat ver : verticesD) {
@@ -188,11 +241,21 @@ void Keyboard(unsigned char key, int x, int y) {
     glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
     glBufferData(GL_ARRAY_BUFFER, currentVertecies.size() * sizeof(float),
                  currentVertecies.data(), GL_STATIC_DRAW);
+    for (int i{0}; i < numVerticesD; i++) {
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
+    glBufferData(GL_ARRAY_BUFFER, currentColors.size() * sizeof(float),
+                 currentColors.data(), GL_STATIC_DRAW);
 
     glutPostRedisplay();
 
     break;
   case '5':
+    srand(time(0)); // seed value
+
     cout << "Obiekt Cos!\n";
     currentVertecies.clear();
     for (GLfloat ver : verticesCos) {
@@ -203,6 +266,14 @@ void Keyboard(unsigned char key, int x, int y) {
     glBindBuffer(GL_ARRAY_BUFFER, idVBO_coord);
     glBufferData(GL_ARRAY_BUFFER, currentVertecies.size() * sizeof(float),
                  currentVertecies.data(), GL_STATIC_DRAW);
+    for (int i{0}; i < numVerticesCos; i++) {
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+      currentColors.push_back((GLfloat)rand() / RAND_MAX);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, idVBO_color);
+    glBufferData(GL_ARRAY_BUFFER, currentColors.size() * sizeof(float),
+                 currentColors.data(), GL_STATIC_DRAW);
 
     glutPostRedisplay();
 
